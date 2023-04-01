@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+{% block messages %}
+    <h1>Диалог</h1>
+        <table>
+            {% for message in messages %}
+            <tr>
+                <td> {{message.text}} </td>
+            </tr>
+            {% endfor %}
+        </table>
+
+        <h1>Отправить сообщение</h1>
+        <form action="/new_message" method="POST">
+            <input type="text" name="text">
+            <input type="hidden" name="chat_id" value="{{chat_id}}">
+            <input type="submit">
+        </form>
+    {% endblock %}
+</body>
+</html>

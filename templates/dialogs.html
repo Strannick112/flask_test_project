@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    {% block messages %}
+        <h1>Диалоги</h1>
+    <table>
+        <tr>
+            {% for user in recipients %}
+            <td><a href="/chat.html?chat_id={{user.id}}"> {{user.login}} </a></td>
+            {% endfor %}
+            {% for user in senders %}
+            <td><a href="/chat.html?chat_id={{user.id}}"> {{user.login}} </a></td>
+            {% endfor %}
+        </tr>
+    </table>
+
+    <h1>Новый диалог</h1>
+    <form action="/new_dialog" method="POST">
+        <input list="login" name="login">
+        <datalist id="login">
+            {% for user in users %}
+            <option> {{user.login}} </option>
+            {% endfor %}
+        </datalist>
+        <input type="submit">
+    </form>
+    {% endblock %}
+</body>
+</html>

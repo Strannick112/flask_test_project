@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Деревушка Керивэлл
+{% endblock %}
+
+{% block header %}
+<div class="container">
+    <header class="d-flex flex-wrap justify-content-center py-3 mb-4 border-bottom">
+        <a href="/index.html" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-dark text-decoration-none">
+            <svg class="bi me-2" width="40" height="32"><use xlink:href="#bootstrap"></use></svg>
+            <span class="fs-4">Деревушка Керивэлл</span>
+        </a>
+
+        <ul class="nav nav-pills">
+            <li class="nav-item"><a href="/index.html" class="nav-link active" aria-current="page">Домашняя страница</a></li>
+            <li class="nav-item"><a href="/features.html" class="nav-link">Особенности</a></li>
+            <li class="nav-item"><a href="/wipes.html" class="nav-link">Перенос вещей</a></li>
+            <li class="nav-item"><a href="/faq.html" class="nav-link">Вопрос-ответ</a></li>
+            <li class="nav-item"><a href="/about.html" class="nav-link">О нас</a></li>
+        </ul>
+    </header>
+</div>
+{% endblock %}
+
+{% block body %}
+Главная страница
+{% endblock %}
+
+{% block footer %}
+<div class="container">
+    <footer class="py-3 my-4">
+        <ul class="nav justify-content-center border-bottom pb-3 mb-3">
+            <li class="nav-item"><a href="/index.html" class="nav-link px-2 text-muted">Домашняя страница</a></li>
+            <li class="nav-item"><a href="/features.html" class="nav-link px-2 text-muted">Особенности</a></li>
+            <li class="nav-item"><a href="/wipes.html" class="nav-link px-2 text-muted">Перенос вещей</a></li>
+            <li class="nav-item"><a href="/faq.html" class="nav-link px-2 text-muted">Вопрос-ответ</a></li>
+            <li class="nav-item"><a href="/about.html" class="nav-link px-2 text-muted">О нас</a></li>
+        </ul>
+        <p class="text-center text-muted">© 2022 Company, Inc</p>
+    </footer>
+</div>
+{% endblock %}
