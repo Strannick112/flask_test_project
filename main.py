@@ -1,3 +1,4 @@
+import functools
 import hashlib
 import os
 
@@ -55,23 +56,29 @@ def auth():
     else:
         return redirect("/auth.html")
 
-@app.route("/profile.html", methods=["GET"])
-def profile():
-    if session.get("login") is not None and session.get("hash") is not None:
-        if db.session.execute(db.select(User).filter_by(login=session["login"], hash=session["hash"])).first() is not None:
-            return render_template("profile.html")
-    else:
+def user(func):
+    @functools.wraps(func)
+    def decorated_func(*args, **kwargs):
+        if session.get("login") is not None and session.get("hash") is not None:
+            if db.session.execute(
+                    db.select(User).filter_by(login=session["login"], hash=session["hash"])).first() is not None:
+                return func(*args, **kwargs)
         return redirect("/auth.html")
+    return decorated_func
+
+@app.route("/profile.html", methods=["GET"])
+@user
+def profile():
+    return render_template("profile.html")
 
 @app.route("/logout", methods=["POST"])
+@user
 def logout():
-    if session.get("login") is not None and session.get("hash") is not None:
-        if db.session.execute(db.select(User).filter_by(login=session["login"], hash=session["hash"])).first() is not None:
-            session.pop("login", None)
-            session.pop("hash", None)
-    return redirect("/auth.html")
+    session.pop("login", None)
+    session.pop("hash", None)
 
 @app.route("/dialogs.html", methods=["GET"])
+@user
 def dialogs():
     user_id = db.session.execute(db.select(User.id).filter_by(login=session.get("login"))).first().id
     recipients = db.session.execute(db.select(User.login, Chat.id).join(Chat, Chat.id_sender==User.id).filter_by(id_recipient=user_id))
@@ -80,6 +87,7 @@ def dialogs():
     return render_template("/dialogs.html", recipients=recipients, senders=senders, users=users)
 
 @app.route("/new_dialog", methods=["POST"])
+@user
 def new_dialog():
     if request.form.get("login") != "":
         id_recipient = db.session.execute(db.select(User.id).filter_by(login=request.form.get("login"))).first().id
@@ -99,12 +107,22 @@ def new_dialog():
                 db.session.commit()
     return redirect(url_for("dialogs"))
 
+@app.route("/delete_dialog", methods=["GET"])
+@user
+def delete_dialog():
+    Message.query.filter(Message.id_chat == request.args.get("chat_id")).delete()
+    Chat.query.filter(Chat.id == request.args.get("chat_id")).delete()
+    db.session.commit()
+    return redirect(url_for("dialogs"))
+
 @app.route("/chat.html", methods=["GET"])
+@user
 def chat():
     messages = db.session.execute(db.select(Message.text).join(Chat, Chat.id==Message.id_chat).filter(Message.id_chat==request.args.get("chat_id")))
     return render_template("/chat.html", messages=messages, chat_id=request.args.get("chat_id"))
 
 @app.route("/new_message", methods=["POST"])
+@user
 def new_message():
     count_of_messages = 0
     for _ in db.session.execute(db.select(Message)):
@@ -118,9 +136,9 @@ def new_message():
 def favicon():
     return send_from_directory(os.path.join(app.root_path, 'static'), 'favicon.ico', mimetype='image/vnd.microsoft.icon')
 
-# @app.route("/<string:page>", methods=["GET"])
-# def others(page):
-#     return render_template(page)
+@app.route("/<string:page>", methods=["GET"])
+def others(page):
+    return render_template(page)
 
 @app.route("/", methods=["GET"])
 def main():
